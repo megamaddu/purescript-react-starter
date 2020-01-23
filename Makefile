@@ -5,6 +5,7 @@ clean:
 
 output: deps
 	npx spago build
+	true > output/Main-bundled.js
 
 build: output
 
@@ -15,7 +16,11 @@ bundle: dist
 
 dist: build
 	npx spago bundle-module --main Main --to output/Main-bundled.js
-	npx parcel build src/index.html
+	rm -rf dist
+	npx parcel build src/index.html --public-url ./
+
+deploy: dist
+	npx gh-pages -d dist
 
 dev: build
 	npx parcel start src/index.html
@@ -23,7 +28,7 @@ dev: build
 deps: node_modules .spago
 
 node_modules:
-	npm i
+	npm ci
 
 .spago: node_modules
 	npx spago install
